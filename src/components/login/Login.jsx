@@ -1,58 +1,110 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { useRef,useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { userCollections } from "../firebase/users";
+import { getDocs } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
+  const [message, setMessage] = useState("");
+  const [users, setUsers] = useState([]);
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
 
+  const navigator = useNavigate();
 
-  const refs = {
-    email: useRef(),
-    pass: useRef()
-  }
+  const dispath = useDispatch();
 
-  const { users } = useSelector((rootReducer) => rootReducer.userReducer);
-  let valornovo = Object.values({users})
-  let assumirValorNovo = valornovo[0]
-  let arrayUser = []
-  arrayUser.push(assumirValorNovo)
-  
+  const { token } = useSelector((rootReducer) => rootReducer.tokenReducer);
 
-  for (let index = 0; index < assumirValorNovo.length; index++) {
+  const goDashboard = useCallback(() => {
+    navigator("/dashboard");
+  }, []);
+
+  const getUsers = async () => {
+    await getDocs(userCollections);
+  };
+  useEffect(() => {
+    /*getUsers()*/
+  }, [users]);
+
+  const handleClickLogin = () => {
+
+    if(email !== ''){
+
+     let gerartoken = String((new Date().getTime() / 1000) * Math.random()) + email
      
-    if(assumirValorNovo[index] !== undefined){
-      arrayUser.push(assumirValorNovo[index])
+        const sendToken = {
+          type: "token",
+          acessToken: gerartoken,
+        }
+        
+        dispath(sendToken);
+        goDashboard()
+        
     }
-  
-  }
-
-  const [messagem,setMensagem] = useState('')
-
-  const handleClickLogin = () =>{
-
-    let verificaEmailExiste = arrayUser.some(obj => obj.email === refs.email.current.value)
     
-    if(verificaEmailExiste){
-        location.href="Dashboard"
+    /*  const verifyUser = users.some(obj => obj.email === email && obj.pass === pass )
+    
+    if(email !== ''){
+
+
+      if(pass !== ''){
+
+        if(verifyUser){
+
+          
+          setGerartoken(String((new Date().getTime() / 1000) * Math.random()) + email)
+
+          dispath({
+            type: 'token',
+            acessToken: gerartoken
+          })
+          
+          console.log({token})
+         /* goDashboard()
+    
+        } else{
+
+          alert("Não existe esse cadastro")
+        }
+
+      } else{
+
+        alert('preencha sua senha')
+      }
+
     } else{
-      setMensagem('Email não existe no cadastro')
+     alert('preencha seu email')
     }
-  }
-  
+    
+ */
+  };
+
   return (
     <React.Fragment>
       <Titulo>Login</Titulo>
-
-      <label htmlFor="email"> Email  </label>
-        <input type="text" id="email" ref={refs.email} />
-    
-      <label htmlFor="pass"> Senha </label>
-        <input type="text" id="pass" ref={refs.pass} />
-     
-      <button
-        onClick={ handleClickLogin }
-      >Enviar</button>
-      <p>{messagem}</p>
+      <div>
+        <label htmlFor="email"> Email </label>
+        <input
+          type="text"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="pass"> Senha </label>
+        <input
+          type="text"
+          id="pass"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+        />
+      </div>
+      <button onClick={handleClickLogin}>Enviar</button>
+      <p>{message}</p>
     </React.Fragment>
   );
 }

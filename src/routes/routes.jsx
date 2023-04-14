@@ -3,7 +3,7 @@ import React from "react";
 import Login from "../components/login/Login";
 import Register from "../components/register/Register";
 import Error from "../pages/Error";
-
+import Dashboard from "../pages/dashboard/dashboard";
 export default function Rotas() {
   return (
     <React.Fragment>
@@ -11,8 +11,10 @@ export default function Rotas() {
         <Routes>
           <Route path="/" element={<Login />} exact/>
           <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/404" element={<Error />} />
           <Route path="*" element={<Navigate to="/404" />} />
+     
         </Routes>
       </Router>
     </React.Fragment>

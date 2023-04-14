@@ -1,24 +1,21 @@
 import { combineReducers, createStore } from "redux";
 
-const initiazeState = {
-    users: [{
-        user:'teste',
-        email:'teste',
-        pass: 'tesste'
-    }]
 
+const token = {
+    acessToken:undefined
+ }
+
+
+const tokenReducer = (state = token, action) =>{
     
-}
-
-const userReducer = ( state = initiazeState ,action ) => {
-    if(action.type){
-        return { ...state,users:[...state.users, action.payload] }
+    if(action.type == "token"){
+        return{  ...state,token: action.acessToken }
     }
     return state
 }
 
 
-const rootReducer = combineReducers({userReducer})
+const rootReducer = combineReducers({tokenReducer})
 
 const store = createStore(rootReducer)
 

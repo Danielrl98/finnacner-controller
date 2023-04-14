@@ -1,72 +1,85 @@
-import React, { useCallback, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHref, useNavigate } from "react-router-dom";
+import React, { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { userCollections } from "../firebase/users";
+import { addDoc, getDocs } from "firebase/firestore";
 
 export default function Register() {
-  const refs = {
-    user: useRef(),
-    email: useRef(),
-    pass: useRef(),
+  const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [messagem, setMensagem] = useState("");
+
+  const navigator = useNavigate();
+
+  const GoLogin = useCallback(() => {
+    navigator("/");
+  }, []);
+/*Capturar os usuarios*/
+  const getUsers = async () => {
+    const data = await getDocs(userCollections);
+
+    setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
+  useEffect(() => {
+    getUsers();
+  }, [users]);
 
-  const navigator = useNavigate()
+/*Cria os usuários */
 
-  const GoLogin = useCallback( ()=>{
+  const handleClickCreate = async () => {
+    const verificaEmailExiste = users.some((obj) => obj.email === email);
 
-    navigator("/")
-
-  },[])
- 
-
-  const dispatch = useDispatch();
-
-  const { users } = useSelector((rootReducer) => rootReducer.userReducer);
-  let valornovo = Object.values({users})
-  let assumirValorNovo = valornovo[0]
-  let arrayUser = []
-
-  const [messagem,setMensagem] = useState('')
-
-  for (let index = 0; index < assumirValorNovo.length; index++) {
-     
-    if(assumirValorNovo[index] !== undefined){
-      arrayUser.push(assumirValorNovo[index])
-    }
-  
-  }
-  const handleClickSubmit = () => {
-
-      let capturarCampos = {
-      type: "vazio por enquanto",
-      payload: {
-        user: refs.user.current.value,
-        email: refs.email.current.value,
-        pass: refs.pass.current.value,
-      },
-    };
-    let verificaEmalExiste = arrayUser.some( obj => obj.email === refs.email.current.value)
-    
-    if(verificaEmalExiste){
-      setMensagem('email já existe')
-    } else{
-      dispatch(capturarCampos)
-      GoLogin()
+    if (verificaEmailExiste) {
+      alert("email já existe, tente outro email");
+    } else {
+      const addUser = await addDoc(userCollections, {
+        name,
+        email,
+        pass,
+      });
+      if (addUser) {
+        getUsers();
+        setMensagem("usuário criado com sucesso");
+      } else {
+        alert("erro tente novamente");
+      }
     }
   };
- 
+
   return (
     <React.Fragment>
       <h1>Registro</h1>
-     
-      <label htmlFor="user"> usuário </label>
-      <input type="text" id="user" ref={refs.user} />
-      <label htmlFor="email"> Email</label>
-      <input type="text" id="email" ref={refs.email} />
-      <label htmlFor="senha"> Senha</label>
-      <input type="text" id="senha" ref={refs.pass} />
-      <button onClick={handleClickSubmit}>Enviar</button>
-      <p>{ messagem } </p>
-     
-      </React.Fragment>
+      <div>
+        <label htmlFor="user"> usuário </label>
+        <input
+          type="text"
+          id="user"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="email"> Email</label>
+        <input
+          type="text"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="senha"> Senha</label>
+        <input
+          type="text"
+          id="senha"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+        />
+      </div>
+      <button onClick={handleClickCreate}>Enviar</button>
+      <p>{messagem} </p>
+      {messagem ? <button onClick={GoLogin}>Fazer Login</button> : <p></p>}
+    </React.Fragment>
   );
 }
