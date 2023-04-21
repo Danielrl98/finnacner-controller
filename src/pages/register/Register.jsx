@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { userCollections } from "../firebase/users";
+import { userCollections } from "../../components/firebase/users";
 import { addDoc, getDocs } from "firebase/firestore";
 
 export default function Register() {

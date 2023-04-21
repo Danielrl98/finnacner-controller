@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { userCollections } from "../firebase/users";
+import { userCollections } from "../../components/firebase/users";
 import { getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,36 +16,29 @@ export default function Login() {
 
   const dispath = useDispatch();
 
-  const { token } = useSelector((rootReducer) => rootReducer.tokenReducer);
-
   const goDashboard = useCallback(() => {
     navigator("/dashboard");
   }, []);
 
   const getUsers = async () => {
-    await getDocs(userCollections);
+   const data =  await getDocs(userCollections);
+   setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+   
   };
   useEffect(() => {
-    /*getUsers()*/
+   getUsers() 
   }, [users]);
 
   const handleClickLogin = () => {
 
-    if(email !== ''){
-
-     let gerartoken = String((new Date().getTime() / 1000) * Math.random()) + email
+   let gerartoken = String((new Date().getTime() / 1000) * Math.random()) + email
      
-        const sendToken = {
-          type: "token",
-          acessToken: gerartoken,
-        }
-        
-        dispath(sendToken);
-        goDashboard()
-        
-    }
-    
-    /*  const verifyUser = users.some(obj => obj.email === email && obj.pass === pass )
+   let sendToken = {
+    type: "token",
+    acessToken: gerartoken,
+  }
+  
+   const verifyUser = users.some(obj => obj.email === email && obj.pass === pass )
     
     if(email !== ''){
 
@@ -54,16 +47,8 @@ export default function Login() {
 
         if(verifyUser){
 
-          
-          setGerartoken(String((new Date().getTime() / 1000) * Math.random()) + email)
-
-          dispath({
-            type: 'token',
-            acessToken: gerartoken
-          })
-          
-          console.log({token})
-         /* goDashboard()
+          dispath(sendToken);
+          goDashboard()
     
         } else{
 
@@ -79,7 +64,7 @@ export default function Login() {
      alert('preencha seu email')
     }
     
- */
+ 
   };
 
   return (
