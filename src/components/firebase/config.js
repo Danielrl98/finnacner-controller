@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app"
-import { useSelector } from "react-redux"
 import { getFirestore,collection } from "firebase/firestore"
 
 const firebaseApp = initializeApp({
@@ -16,6 +15,7 @@ export const db = getFirestore(firebaseApp);
 
 export const userCollections = collection(db, "users");
 export const billsCollections = collection(db, "bills");
+export const clientsCollections = collection(db, "clients");
 
 
 

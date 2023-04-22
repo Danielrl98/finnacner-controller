@@ -1,27 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { billsCollections, db } from "../../../components/firebase/users";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { billsCollections, clientsCollections, db } from "../../../components/firebase/config";
 import { doc, getDocs, updateDoc } from "firebase/firestore";
 import queryStrings from "query-string";
 import { useLocation } from "react-router-dom";
 
 const EditRelease = () => {
+
   const { search } = useLocation();
   const code = queryStrings.parse(search);
   const idCapture = Object.keys(code)[0];
+
   const [release, setRelease] = useState([]);
-
-  const getUsers = async () => {
-    const data = await getDocs(billsCollections);
-
-    setRelease(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  };
- 
-  useEffect( () =>{
-    getUsers();
-  },[]) 
-  
-  const findId = release.filter(({ id }) => id === idCapture);
- 
   const [name, setName] = useState("");
   const [client, setClient] = useState("");
   const [value, setValue] = useState(0);
@@ -29,7 +18,39 @@ const EditRelease = () => {
   const [dueDate, setDueDate] = useState("");
   const [plan, setPlan] = useState("");
   const [itsPaid, setItsPaid] = useState(false);
+  const [clients,setClients] = useState([])
 
+  const buttonHide = useRef(null)
+
+  const handleForceClick = () => {
+    buttonHide .current.click();
+  };
+
+  const getUsers = async () => {
+
+    await getDocs(billsCollections)
+    .then((data) => {
+
+      setRelease(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+     
+    })
+    .then ( () =>{
+      console.log(release)
+    })
+
+    setName( findId.map((obj) => obj.name))
+    setClient( findId.map((obj) => obj.client))
+    setValue( findId.map((obj) => obj.value) )
+    setReleaseDate( findId.map((obj) => obj.releaseDate) )
+    setDueDate( findId.map((obj) => obj.dueDate)  )
+    setPlan( findId.map((obj) => obj.plan) )
+  };
+  
+  const findId = release.filter(({ id }) => id === idCapture);
+  
+  
+
+  
   const handleEditBill = async () => {
     const update = doc(db, "bills", idCapture);
 
@@ -40,7 +61,7 @@ const EditRelease = () => {
       releaseDate,
       dueDate,
       plan,
-      itsPaid,
+      itsPaid
     })
       .then(() => {
         alert("atualizado com sucesso");
@@ -49,7 +70,25 @@ const EditRelease = () => {
         alert("erro");
       });
   };
+  const getClients = async () => {
 
+    const data = await getDocs(clientsCollections)
+    
+    setClients(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  
+  }
+  useEffect( () =>{
+    getUsers()
+
+    setTimeout( () =>{
+
+      handleForceClick()
+
+    },3000)
+    getClients()
+    
+  },[])
+  
   return (
     <React.Fragment>
       <h1>Criar Lançamento</h1>
@@ -59,25 +98,29 @@ const EditRelease = () => {
           <input
             type="text"
             id="name_bill"
-            value={ findId.map((obj) => obj.name) }
+            value={ name }
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div>
           <label htmlFor="client">Nome do cliente</label>
-          <input
+          <select
             type="text"
             id="client"
-            value={ findId.map((obj) => obj.client) }
+            value={client}
             onChange={(e) => setClient(e.target.value)}
-          />
+          >
+            
+            {clients.map(client => <option key={client.length} value={client.name}>{client.name}</option> ) 
+            }
+          </select>
         </div>
         <div>
           <label htmlFor="value">Valor</label>
           <input
             type="number"
             id="value"
-            value={ findId.map((obj) => obj.value) }
+            value={ value }
             onChange={(e) => setValue(e.target.value)}
           />
         </div>
@@ -86,7 +129,7 @@ const EditRelease = () => {
           <input
             type="date"
             id="release_date"
-            value={ findId.map((obj) => obj.releaseDate) }
+            value={ releaseDate }
             onChange={(e) => setReleaseDate(e.target.value)}
           />
         </div>
@@ -95,7 +138,7 @@ const EditRelease = () => {
           <input
             type="date"
             id="due_date"
-            value={ findId.map((obj) => obj.dueDate) }
+            value={ dueDate }
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
@@ -104,7 +147,7 @@ const EditRelease = () => {
           <input
             type="text"
             id="plain_account"
-            value={ findId.map((obj) => obj.plan) }
+            value={ plan }
             onChange={(e) => setPlan(e.target.value)}
             disabled
           >
@@ -120,8 +163,9 @@ const EditRelease = () => {
                     ></input>
                   </div>
                 ) : (
-                  <div>
+                  <div key={obj.id}>
                     <input type="checkbox" id="its_paid"
+                    checked={ itsPaid }
                      onChange={(e) => setItsPaid(e.target.checked)}
                     ></input>
                   </div>
@@ -131,6 +175,10 @@ const EditRelease = () => {
         </div>
         <div>
           <button onClick={handleEditBill}>Criar</button>
+          <button 
+          ref={ buttonHide } onClick={ getUsers } 
+          style={{visibility:" hidden"}}
+          >Atualizar</button>
         </div>
       </div>
     </React.Fragment>

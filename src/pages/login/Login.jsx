@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import { userCollections } from "../../components/firebase/users";
+import { userCollections } from "../../components/firebase/config";
 import { getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { billsCollections } from "../../../components/firebase/users";
-import { addDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { billsCollections, clientsCollections } from "../../../components/firebase/config";
+import { addDoc, getDocs } from "firebase/firestore";
 
 
 const Addrelease = () => {
+
   let id = String((new Date().getTime() / 1000) * Math.random())
   const [name, setName] = useState("");
   const [client, setClient] = useState("");
@@ -12,10 +13,11 @@ const Addrelease = () => {
   const [dueDate, setDueDate] = useState("");
   const [plan, setPlan] = useState("");
   const [itsPaid, setItsPaid] = useState(false);
-  
+  const [clients,setClients] = useState([])
+
   const handleCreateBill = async () =>{
 
-    const data = await addDoc(billsCollections,{
+    await addDoc(billsCollections,{
         id,
         name,
         client,
@@ -24,13 +26,24 @@ const Addrelease = () => {
         dueDate,
         plan,
         itsPaid
-    }) .then( () => {
+    }).then( () => {
         alert('criado com sucesso')
     }).catch( () => {
         alert('erro')
     })
     
 }
+const getClients = async () => {
+
+  const data = await getDocs(clientsCollections)
+  
+  setClients(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+}
+useEffect( () =>{
+  getClients()
+  
+},[])
 
   return (
     <React.Fragment>
@@ -39,20 +52,24 @@ const Addrelease = () => {
         <div>
           <label htmlFor="name-bill">Nome da conta</label>
           <input
-            type="text"
             id="name_bill"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+
         </div>
         <div>
           <label htmlFor="client">Nome do cliente</label>
-          <input
+          <select
             type="text"
             id="client"
             value={client}
             onChange={(e) => setClient(e.target.value)}
-          />
+          >
+            
+            {clients.map(client => <option value={client.name}>{client.name}</option> ) 
+            }
+          </select>
         </div>
         <div>
           <label htmlFor="value">Valor</label>
