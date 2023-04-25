@@ -23,10 +23,10 @@ const EditRelease = () => {
   const buttonHide = useRef(null)
 
   const handleForceClick = () => {
-    buttonHide .current.click();
+    buttonHide.current.click();
   };
 
-  const getUsers = async () => {
+  const getReleases = async () => {
 
     await getDocs(billsCollections)
     .then((data) => {
@@ -36,24 +36,31 @@ const EditRelease = () => {
     })
     .then ( () =>{
       console.log(release)
+      setName(state => findId.map((obj) => obj.name))
+      setClient(state => findId.map((obj) => obj.client))
+      setValue(state => findId.map((obj) => obj.value) )
+      setReleaseDate(state =>findId.map((obj) => obj.releaseDate) )
+      setDueDate(state => findId.map((obj) => obj.dueDate)  )
+      setPlan(state => findId.map((obj) => obj.plan) )
     })
 
-    setName( findId.map((obj) => obj.name))
-    setClient( findId.map((obj) => obj.client))
-    setValue( findId.map((obj) => obj.value) )
-    setReleaseDate( findId.map((obj) => obj.releaseDate) )
-    setDueDate( findId.map((obj) => obj.dueDate)  )
-    setPlan( findId.map((obj) => obj.plan) )
+   
   };
   
   const findId = release.filter(({ id }) => id === idCapture);
-  
-  
-
-  
+   
   const handleEditBill = async () => {
+
     const update = doc(db, "bills", idCapture);
 
+      console.log(name,
+        client,
+        value,
+        releaseDate,
+        dueDate,
+        plan,
+        itsPaid)
+    
     await updateDoc(update, {
       name,
       client,
@@ -63,8 +70,9 @@ const EditRelease = () => {
       plan,
       itsPaid
     })
-      .then(() => {
-        alert("atualizado com sucesso");
+      .then(() => {     
+        alert("Atualizado com sucesso");
+        getReleases()
       })
       .catch(() => {
         alert("erro");
@@ -78,7 +86,7 @@ const EditRelease = () => {
   
   }
   useEffect( () =>{
-    getUsers()
+    getReleases()
 
     setTimeout( () =>{
 
@@ -107,10 +115,9 @@ const EditRelease = () => {
           <select
             type="text"
             id="client"
-            value={client}
+            value={ client }
             onChange={(e) => setClient(e.target.value)}
           >
-            
             {clients.map(client => <option key={client.length} value={client.name}>{client.name}</option> ) 
             }
           </select>
@@ -144,14 +151,15 @@ const EditRelease = () => {
         </div>
         <div>
           <label htmlFor="plain_account">Planos de contas</label>
-          <input
-            type="text"
+          <select
+            
             id="plain_account"
             value={ plan }
             onChange={(e) => setPlan(e.target.value)}
-            disabled
           >
-          </input>
+            <option value="Despesa">Despesa</option>
+            <option value="Despesa">Receita</option>
+          </select>
         </div>
         <div>
           <label htmlFor="its_paid">está pago?</label>
@@ -176,7 +184,7 @@ const EditRelease = () => {
         <div>
           <button onClick={handleEditBill}>Criar</button>
           <button 
-          ref={ buttonHide } onClick={ getUsers } 
+          ref={ buttonHide } onClick={ getReleases } 
           style={{visibility:" hidden"}}
           >Atualizar</button>
         </div>
