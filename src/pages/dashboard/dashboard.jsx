@@ -1,32 +1,28 @@
-import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import React from "react";
+import styled from 'styled-components'
 
 export default function Dashboard() {
 
-  const { token } = useSelector((rootReducer) => rootReducer.tokenReducer);
-
-  const navigator = useNavigate();
-
-  const backHome = useCallback(() => {
-
-    navigator("/");
-
-  }, []);
-
-    console.log(token)
-
-  if (token === undefined) {
-    /*Verifica se tem token, se não tem volta para area de login */
-    /*  location.href="/"
-    return*/
-  }
-
+  const Container = styled.section`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px;
+    gap:30px;
+    text-align: center;
+    
+  `
   return (
     <React.Fragment>
-          <Link to="/release/">Lançamentos</Link>:   
+      <Container>
+        <h1>Seja bem vindo ao meu projeto</h1>
+
+        <p>
+          Esse projeto se trata de um pequeno sistema financeiro onde é possível
+          cadastrar todas as suas contas a pagar e a receber.<br></br> agradeço pela contribuição em
+          melhoria desse projeto.
+        </p>
+      </Container>
     </React.Fragment>
-  )
-  
+  );
 }

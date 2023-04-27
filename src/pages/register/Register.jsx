@@ -2,19 +2,23 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userCollections } from "../../components/firebase/config";
 import { addDoc, getDocs } from "firebase/firestore";
+import { Input,Label,Container, DivTerms, Submit, DivMessage } from "../../theme/theme";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const [messagem, setMensagem] = useState("");
+  const [message, setMessage] = useState("");
+  const [terms, setTerms] = useState(false);
 
   const navigator = useNavigate();
 
   const GoLogin = useCallback(() => {
     navigator("/");
   }, []);
+
 /*Capturar os usuarios*/
   const getUsers = async () => {
     const data = await getDocs(userCollections);
@@ -25,13 +29,26 @@ export default function Register() {
     getUsers();
   }, [users]);
 
-/*Cria os usuários */
 
+const hideMessage = (value) => {
+  setMessage(value);
+  setTimeout(() => {
+    setMessage("");
+  }, 2000);
+};
+/*Cria os usuários */
   const handleClickCreate = async () => {
+
+    if(name == '') return  hideMessage("Usuário vazio tente novamente")
+    if(email == '') return  hideMessage("Email vazio tente novamente")
+    if(pass == '')  return  hideMessage("Senha vazia tente novamente")
+    if(terms == '') return  hideMessage("Aceite os termos de uso")
+
     const verificaEmailExiste = users.some((obj) => obj.email === email);
 
     if (verificaEmailExiste) {
-      alert("email já existe, tente outro email");
+      
+      hideMessage("Email já existe tente outro")
     } else {
       const addUser = await addDoc(userCollections, {
         name,
@@ -39,47 +56,68 @@ export default function Register() {
         pass,
       });
       if (addUser) {
-        getUsers();
-        setMensagem("usuário criado com sucesso");
+        getUsers();  
+        hideMessage("usuário criado com sucesso")
       } else {
-        alert("erro tente novamente");
+        hideMessage("Erro")
       }
     }
+
+   
   };
 
   return (
     <React.Fragment>
-      <h1>Registro</h1>
+      <Container>
       <div>
-        <label htmlFor="user"> usuário </label>
-        <input
+        <Label htmlFor="user"> usuário </Label>
+        <Input
           type="text"
           id="user"
+          placeholder="Nome do usuário"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div>
-        <label htmlFor="email"> Email</label>
-        <input
-          type="text"
+        <Label htmlFor="email"> Email</Label>
+        <Input
+          type="email"
           id="email"
-          value={email}
+          placeholder="Seu melhor email"
+          value={email.toLowerCase()}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="new-password"
         />
       </div>
       <div>
-        <label htmlFor="senha"> Senha</label>
-        <input
+        <Label htmlFor="senha"> Senha</Label>
+        <Input
           type="text"
           id="senha"
+          placeholder="Sua Senha"
           value={pass}
           onChange={(e) => setPass(e.target.value)}
         />
       </div>
-      <button onClick={handleClickCreate}>Enviar</button>
-      <p>{messagem} </p>
-      {messagem ? <button onClick={GoLogin}>Fazer Login</button> : <p></p>}
+      <DivTerms>
+            <input
+              type="checkbox"
+              id="checkbox-termos"
+              onChange={(e) => setTerms(e.target.checked)}
+            />
+            <label htmlFor="checkbox-termos">Aceitar os termos de uso</label>
+      </DivTerms>
+      <Submit onClick={handleClickCreate}>Enviar</Submit>
+     
+      <DivMessage>
+        <p>{message} </p>
+      </DivMessage>
+
+      <div style={{textAlign:"center"}}>
+            Já tem uma conta? <Link to="/">Fazer Login</Link>
+      </div>
+      </Container>
     </React.Fragment>
   );
 }
