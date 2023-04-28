@@ -17,6 +17,8 @@ const Addrelease = () => {
 
   const handleCreateBill = async () =>{
 
+    if(client == '') return alert('Selecione um cliente');
+
     await addDoc(billsCollections,{
         id,
         name,
@@ -63,12 +65,17 @@ useEffect( () =>{
           <select
             type="text"
             id="client"
-            value={client}
             onChange={(e) => setClient(e.target.value)}
+            defaultValue="nenhum"
           >
-            
-            {clients.map(client => <option value={client.name}>{client.name}</option> ) 
+            <option>Selecione</option>
+            {clients.map((client) => (
+
+              <option value={client.name}>{client.name}</option>
+
+            )) 
             }
+
           </select>
         </div>
         <div>

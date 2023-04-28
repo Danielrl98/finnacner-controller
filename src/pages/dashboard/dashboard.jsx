@@ -19,7 +19,8 @@ export default function Dashboard() {
 
         <p>
           Esse projeto se trata de um pequeno sistema financeiro onde é possível
-          cadastrar todas as suas contas a pagar e a receber.<br></br> agradeço pela contribuição em
+          cadastrar todas as suas contas a pagar e a receber.
+          <br></br> agradeço pela contribuição em
           melhoria desse projeto.
         </p>
       </Container>

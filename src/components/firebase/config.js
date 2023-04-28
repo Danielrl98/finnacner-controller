@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore,collection } from "firebase/firestore"
+import env from "react-dotenv";
+
 
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyDgE2CFnWJADkIvvKvFb3OrJBxBq_fiQPQ",
+  apiKey: process.env.APIKEY,
   authDomain: "reactfirebase2-91017.firebaseapp.com",
   projectId: "reactfirebase2-91017",
   storageBucket: "reactfirebase2-91017.appspot.com",
