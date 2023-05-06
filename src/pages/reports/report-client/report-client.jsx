@@ -16,14 +16,14 @@ import {
   Button,
   Input,
   ButtonDelete,
-} from "./style";
+} from "../../Release/listRelease/style";
 import { BsSearch } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import ReactPaginate from "react-paginate";
-import './styled.sass'
+import jsPDF from 'jspdf';
 
-export default function ListRelease() {
+export default function ReportClient() {
   
   const [release, setRelease] = useState([]);
   const [filter, setFilter] = useState("");
@@ -77,17 +77,30 @@ export default function ListRelease() {
       display:'flex',
       flexDirection:'row'
   }
+  
+  const criarPDF = () => {
+    const doc = new jsPDF('p', 'pt', 'a4');
+    const myHTML = document.querySelector('#meuHTML').innerHTML
+
+
+    doc.html('<div >'+myHTML+'</div>' , {
+      callback: function () {
+      
+        
+        doc.save('meu-pdf.pdf');
+      },
+      x: 0,
+      y: 0
+    });
+  };
+
   return (
-    <React.Fragment>
+    <React.Fragment >
       <Container>
+        
         <Menu>
-          <div>
-            <Link to="/release/create">
-              <Button>
-                {" "}
-                <AiOutlinePlusCircle /> Criar Lançamento
-              </Button>
-            </Link>
+          <div> 
+            <Button onClick={ criarPDF }>Gerar PDF</Button>
           </div>
           <MenuGrid2>
             <Input
@@ -100,7 +113,7 @@ export default function ListRelease() {
             </Button>
           </MenuGrid2>
         </Menu>
-        <TableWrapper>
+        <TableWrapper id="meuHTML">
           <Table>
             <Thead>
               <tr>
@@ -110,8 +123,6 @@ export default function ListRelease() {
                 <Th style={{ width: "15%" }}>Data de vencimento</Th>
                 <Th style={{ width: "15%" }}>Plano de contas</Th>
                 <Th style={{ width: "15%" }}>Quitado</Th>
-                <Th style={{ width: "5%" }}></Th>
-                <Th style={{ width: "5%" }}></Th>
               </tr>
             </Thead>
             <Tbody>
@@ -140,23 +151,13 @@ export default function ListRelease() {
                       </Td>
                       <Td>{releases.plan}</Td>
                       <Td>{releases.itsPaid ? "Pago" : "Não pago"}</Td>
-                      <Td>
-                        <Link to={"/release/edit?" + releases.id}>
-                          <Button>Editar</Button>
-                        </Link>
-                      </Td>
-                      <Td>
-                        <ButtonDelete
-                          onClick={() => handleDeleteDocs(releases.id)}
-                        >
-                          <IoMdClose />
-                        </ButtonDelete>
-                      </Td>
+                       
                     </Tr>
                   );
                 })}
             </Tbody>
           </Table>
+          
           <ReactPaginate
             className="react-paginate-class"
             pageCount={totalPageCount}

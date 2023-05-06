@@ -1,4 +1,4 @@
-import styled,{css} from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Container = styled.section`
 
@@ -24,7 +24,7 @@ export const Thead = styled.thead`
 position: sticky;
 background-color: #1b4965;
 color: #fff;
-text-align: center;
+text-align: left;
 top: 0;
 z-index: 1;
 
@@ -58,6 +58,49 @@ overflow: hidden;
 text-overflow: ellipsis;
 white-space: nowrap;
 
+`
+export const Menu = styled.div`
+    display: grid;
+    width: 100%;
+    grid-template-columns: 50% 50%;
 
+`
+export const MenuGrid2 = styled.div`
+    display: flex;
+    justify-content: end;
+`
+export const Button = styled.button`
+    border: none;
+    background-color: ${ props => props.theme.colors.blue};
+    color: #fff;
+    border-radius: 2px;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: 600;
 
+    & svg {
+        margin-top: 3px;
+    }
+`
+
+export const Input = styled.input`
+    padding: 10px 4px;
+    border:  ${ props => props.theme.colors.grey};
+    border-radius: 4px;
+    outline: none;
+    width: 70%;
+`
+export const ButtonDelete = styled.button`
+    border: none;
+    background-color: transparent;
+    color:  red;
+    border-radius: 2px;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: 600;
+
+    & svg {
+        fill: red;
+        
+    }
 `

@@ -3,8 +3,8 @@ import { AiOutlineBorderInner } from "react-icons/ai";
 import { NavGrid } from "./style";
 import { Titulo,Links } from './style'
 import { FaUserFriends } from 'react-icons/fa'
-export default function Navbar() {
 
+export default function Navbar() {
 
   return (
     <React.Fragment>
@@ -28,6 +28,12 @@ export default function Navbar() {
             </Links>
             <Links>
               <FaUserFriends /> <a href="/release">Lançamentos</a>
+            </Links>
+            <Links>
+              <FaUserFriends /> <a>Relatórios</a>
+            </Links>
+            <Links>
+               <a href="/reports">  Clientes</a>
             </Links>
           </div>
         </main>

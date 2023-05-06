@@ -23,7 +23,7 @@ export default function App() {
   return (
     <React.Fragment>
       {localStorage.getItem("token") ? (
-        <Grid style={token ? { display: "grid" } : { display: "flex" }}>
+        <Grid >
           <Navbar></Navbar>
           <GridDash style={token ? { height: "auto" } : { height: "100vh" }}>
             <Header />
@@ -31,7 +31,7 @@ export default function App() {
           </GridDash>
         </Grid>
       ) : (
-        <Grid style={token ? { display: "grid" } : { display: "flex" }}>
+        <Grid style={{display: 'flex'}}>
           <GridDash style={token ? { height: "auto" } : { height: "100vh" }}>
             <Rotas />
           </GridDash>

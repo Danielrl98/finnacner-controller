@@ -9,6 +9,8 @@ import ListRelease from "../pages/Release/listRelease/listRelease";
 import EditRelease from "../pages/Release/editRelease/editRelease";
 import AddClient from "../pages/clients/addClient/addClient";
 import ListClient from "../pages/clients/listClient/listClient";
+import ReportClient from "../pages/reports/report-client/report-client";
+
 export default function Rotas() {
  
     return (
@@ -23,6 +25,8 @@ export default function Rotas() {
           <Route path='/release/edit' element={<EditRelease />} />
           <Route path="/clients/" element={<ListClient />} />
           <Route path="/clients/create" element={<AddClient />} />
+          <Route path="/reports" element={<ReportClient />} />
+
           <Route path="/404" element={<Error />} />
           <Route path="*" element={<Navigate to="/404" />} />
  
